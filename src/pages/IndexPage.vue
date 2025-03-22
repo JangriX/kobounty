@@ -7,6 +7,7 @@
   // Player add
   const addDialog = ref(false)
   const addInput = ref("")
+  const buyIn=30
 
   // Player KO
   const knockoutDialog = ref(false)
@@ -28,12 +29,12 @@
   function addPlayer(){
     players.value.push({
       name: addInput.value,
-      bounty: 15,
+      bounty: buyIn/2,
       winnings: 0,
       active: true,
       place: null
     })
-    prizePool.value += 15
+    prizePool.value += buyIn
     toggleAddDialog()
   }
 
@@ -54,7 +55,7 @@
     players.value[clickedPlayer].active = true
     players.value[clickedPlayer].bounty = 15
     players.value[clickedPlayer].place = null
-    prizePool.value += 15
+    prizePool.value += buyIn
   }
 
   function activePlayers(){
@@ -64,14 +65,15 @@
   function endGame(){
     gameActive.value = false
     let winner = players.value.filter((obj) => obj.active === true)[0]
+    const regularPrizePool = prizePool.value/2
     winner.winnings += winner.bounty
     if (players.value.count > 6){
-      winner.winnings += prizePool.value*0.5
-      players.value.filter((obj) => obj.place === 2)[0].winnings += prizePool.value*0.3
-      players.value.filter((obj) => obj.place === 3)[0].winnings += prizePool.value*0.2
+      winner.winnings += regularPrizePool*0.5
+      players.value.filter((obj) => obj.place === 2)[0].winnings += regularPrizePool*0.3
+      players.value.filter((obj) => obj.place === 3)[0].winnings += regularPrizePool*0.2
     } else {
-      winner.winnings += prizePool.value*0.65
-      players.value.filter((obj) => obj.place === 2)[0].winnings += prizePool.value*0.35
+      winner.winnings += regularPrizePool*0.65
+      players.value.filter((obj) => obj.place === 2)[0].winnings += regularPrizePool*0.35
     }
   }
 </script>
@@ -80,7 +82,7 @@
   <q-dialog v-model="addDialog">
     <q-card>
       <q-input v-model="addInput" label="Name" />
-      <q-btn @click="addPlayer" label="Add" />
+      <q-btn @click="addPlayer()" label="Add" />
     </q-card>
   </q-dialog>
   <q-dialog v-model="knockoutDialog">
